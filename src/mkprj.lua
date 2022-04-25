@@ -2,11 +2,20 @@
 -- @author Evgeni Genchev
 -- @license MIT
 
-local company, p_type, l_type = ...
+local p_name, p_type, l_type = ...
 
-local supportedProjects = {["pentest"] = 1, ["python"] = 2, ["c"] = 3, ["c++"] = 4, ["fast_api"] = 5, ["lua"] = 6}
-local supportedLicenses = {["mit"] = true, ["apache"] = true, ["isc"] = true, ["bsd"] = true, ["gpl3"] = true}
 
+local supportedLicenses = {
+["mit"] = true,["apache"] = true,
+["isc"] = true, ["bsd"] = true,
+["gpl3"] = true
+}
+
+local supportedProjects = {
+["pentest"] = 1, ["python"] = 2,
+["c"] = 3, ["c++"] = 4,
+["fast_api"] = 5, ["lua"] = 6
+}
 
 function NoProjectNameException()
 	print("No project name provided!")
@@ -66,7 +75,7 @@ end
 
 --- Check if the all the arguments are present and legal
 local function check_args()
-	if not company then
+	if not p_name then
 		NoProjectNameException()
 	else
 		p_type = strip(p_type:lower())
@@ -86,14 +95,62 @@ local function check_args()
 			end
 		end
 	end
-	return true
+
 end
 
 
+local function python(projectName, licenseName)
+	os.execute("mkdir -p " .. projectName .. "/" .. projectName )
 
-if check_args() then
-	local pwd = os.getenv("PWD")
-	os.execute("cd " .. pwd)
+	if not (licenseName == nil) then
+		--- TODO: Needs formatting of licenses
+		os.execute("echo " .. supportedLicenses[licenseName] .. " > " .. projectName .. "/LICENSE")
+	end
+	os.execute("touch " .. projectName ..  "/requirements.txt")
+	os.execute('echo "#' .. projectName .. '\n" > '.. projectName ..'/README.md')
+	os.execute("mkdir " .. projectName .. "/tests")
+	os.execute("touch " .. projectName .. "/setup.py")
+	os.execute("touch "..projectName.."/"..projectName.."/main.py "..projectName.."/"..projectName.."/".."__init__.py")
+
+
 end
+
+local function pentest(projectName)
+	os.execute("mkdir -p " .. projectName .. "/EPT/evidence/credentials")
+	os.execute("mkdir " .. projectName .. "/EPT/evidence/data")
+	os.execute("mkdir " .. projectName .. "/EPT/evidence/screenshots")
+	os.execute("mkdir " .. projectName .. "/EPT/logs")
+	os.execute("mkdir " .. projectName .. "/EPT/scans")
+	os.execute("mkdir " .. projectName .. "/EPT/scope")
+	os.execute("mkdir " .. projectName .. "/EPT/tools")
+
+
+	os.execute("mkdir -p " .. projectName .. "/IPT/evidence/credentials")
+	os.execute("mkdir " .. projectName .. "/IPT/evidence/data")
+	os.execute("mkdir " .. projectName .. "/IPT/evidence/screenshots")
+	os.execute("mkdir " .. projectName .. "/IPT/logs")
+	os.execute("mkdir " .. projectName .. "/IPT/scans")
+	os.execute("mkdir " .. projectName .. "/IPT/scope")
+	os.execute("mkdir " .. projectName .. "/IPT/tools")
+end
+
+local function c(projectName, licenseName) end
+local function cpp(projectName, licenseName) end
+local function fast_api(projectName, licenseName) end
+local function _lua(projectName, licenseName) end
+
+
+check_args()
+
+local pwd = os.getenv("PWD")
+os.execute("cd " .. pwd)
+local index = supportedProjects[p_type]
+
+if index==1 then pentest(p_name)
+elseif index==2 then python(p_name, l_type)
+elseif index==3 then c(p_name, l_type)
+elseif index==4 then cpp(p_name, l_type)
+elseif index==5 then fast_api(p_name, l_type)
+elseif index==6 then _lua(p_name, l_type) end
 
 
