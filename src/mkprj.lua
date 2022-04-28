@@ -14,7 +14,8 @@ local supportedLicenses = {
 local supportedProjects = {
 ["pentest"] = 1, ["python"] = 2,
 ["c"] = 3, ["c++"] = 4,
-["fast_api"] = 5, ["lua"] = 6
+["fast_api"] = 5, ["lua"] = 6,
+["playdate"] = 7
 }
 
 function NoProjectNameException()
@@ -134,8 +135,33 @@ local function pentest(projectName)
 	os.execute("mkdir " .. projectName .. "/IPT/tools")
 end
 
+local function playdate(projectName)
+	os.execute("mkdir -p " .. projectName .. "/source/images")
+	os.execute("mkdir -p " .. projectName .. "/source/sounds")
+	os.execute("mkdir -p " .. projectName .. "/support")
+	os.execute("touch " .. projectName .. "/source/main.lua")
+end
+
+
+local function cpp(projectName, licenseName)
+	os.execute("mkdir -p " .. projectName .. "/include")
+	os.execute("mkdir -p " .. projectName .. "/src")
+	os.execute("mkdir -p " .. projectName .. "/test")
+	os.execute("mkdir -p " .. projectName .. "/libs")
+	os.execute("touch " .. projectName .. "/CMakeLists.txt")
+	os.execute("touch " .. projectName .. "/src/main.cpp")
+	local file = io.open(projectName .. "/CMakeLists.txt", "w")
+	file:write([[cmake_minimum_required(VERSION %.2f)
+project(%s)
+
+set(CMAKE_CXX_STANDARD %d)
+add_executable(%s src/main.cpp)]])
+	file:close()
+
+end
+
+
 local function c(projectName, licenseName) end
-local function cpp(projectName, licenseName) end
 local function fast_api(projectName, licenseName) end
 local function _lua(projectName, licenseName) end
 
@@ -151,6 +177,5 @@ elseif index==2 then python(p_name, l_type)
 elseif index==3 then c(p_name, l_type)
 elseif index==4 then cpp(p_name, l_type)
 elseif index==5 then fast_api(p_name, l_type)
-elseif index==6 then _lua(p_name, l_type) end
-
-
+elseif index==6 then _lua(p_name, l_type)
+elseif index==7 then playdate(p_name) end
