@@ -160,10 +160,15 @@ add_executable(%s src/main.cpp)]])
 
 end
 
+local function _lua(projectName, licenseName)
+	os.execute("mkdir -p " .. projectName .. "/bin")
+	os.execute("mkdir -p " .. projectName .. "/test")
+	os.execute("mkdir -p " .. projectName .. "/src")
+	os.execute("touch " .. projectName .. "/src/main.lua")
+end
 
 local function c(projectName, licenseName) end
 local function fast_api(projectName, licenseName) end
-local function _lua(projectName, licenseName) end
 
 
 check_args()
